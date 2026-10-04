@@ -1,8 +1,23 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import * as SecureStore from 'expo-secure-store';
-import * as Notifications from 'expo-notifications';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { Platform } from 'react-native';
 import client from '../api/client';
+
+// Remote push notifications are removed from Expo Go in SDK 53+.
+// We only load expo-notifications in standalone/development builds.
+const isExpoGo =
+  Constants?.appOwnership === 'expo' ||
+  Constants?.executionEnvironment === ExecutionEnvironment.StoreClient;
+
+let Notifications = null;
+if (!isExpoGo) {
+  try {
+    Notifications = require('expo-notifications');
+  } catch (err) {
+    // expo-notifications not loaded in Expo Go
+  }
+}
 
 const AuthContext = createContext(null);
 
@@ -42,7 +57,7 @@ export const AuthProvider = ({ children }) => {
   // Register push notifications
   const registerPushToken = async () => {
     try {
-      if (Platform.OS === 'web') return;
+      if (Platform.OS === 'web' || !Notifications) return;
       const { status: existingStatus } = await Notifications.getPermissionsAsync();
       let finalStatus = existingStatus;
       if (existingStatus !== 'granted') {
@@ -64,7 +79,7 @@ export const AuthProvider = ({ children }) => {
   const loginWithPin = async (mobile, pin) => {
     let pushToken = null;
     try {
-      if (Platform.OS !== 'web') {
+      if (Platform.OS !== 'web' && Notifications) {
         const tokenData = await Notifications.getExpoPushTokenAsync().catch(() => null);
         pushToken = tokenData?.data;
       }
