@@ -1,0 +1,19 @@
+{
+  "name": "society-management-system",
+  "version": "1.0.0",
+  "description": "Society Management & Building Maintenance Management System",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "admin-portal"
+  ],
+  "scripts": {
+    "start:backend": "npm --workspace=backend start",
+    "dev:backend": "npm --workspace=backend run dev",
+    "dev:admin": "npm --workspace=admin-portal run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:admin\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
