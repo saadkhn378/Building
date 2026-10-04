@@ -11,6 +11,8 @@
     "start:backend": "npm --workspace=backend start",
     "dev:backend": "npm --workspace=backend run dev",
     "dev:admin": "npm --workspace=admin-portal run dev",
+    "dev:mobile": "npm --prefix member-app start",
+    "mobile:web": "npm --prefix member-app run web",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:admin\""
   },
   "devDependencies": {
